@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGH - Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-top: 4px solid #3C3489;
+            /* Color oficial del SIGH */
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #3C3489;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Centro de Mando - S.I.G.H.</h1>
+        <p>Sistema de Gestión de Horarios | Universidad Autónoma de Querétaro</p>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="card">
+            <h3>Facultades</h3>
+            <div class="number">{{ total_facultades }}</div>
+        </div>
+        <div class="card">
+            <h3>Materias</h3>
+            <div class="number">{{ total_materias }}</div>
+        </div>
+        <div class="card">
+            <h3>Profesores</h3>
+            <div class="number">{{ total_profesores }}</div>
+        </div>
+        <div class="card">
+            <h3>Estudiantes</h3>
+            <div class="number">{{ total_estudiantes }}</div>
+        </div>
+        <div class="card">
+            <h3>Aulas</h3>
+            <div class="number">{{ total_aulas }}</div>
+        </div>
+        <div class="card">
+            <h3>Grupos Activos</h3>
+            <div class="number">{{ total_grupos }}</div>
+        </div>
+        <div class="card">
+            <h3>Sesiones</h3>
+            <div class="number">{{ total_sesiones }}</div>
+        </div>
+        <div class="card">
+            <h3>Eventos</h3>
+            <div class="number">{{ total_eventos }}</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
