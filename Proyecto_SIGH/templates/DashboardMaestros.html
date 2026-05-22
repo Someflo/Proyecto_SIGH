@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Maestro</title>
+    <link rel="stylesheet" href="{% static 'styleDash.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <section class="dashboard">
+        <aside class="nav">
+            <ul>
+                <li class="logo-item">
+                    <a href="#">
+                        <span class="icon"><i class="fa-regular fa-address-card"></i></span>
+                        <span class="title">Portal de usuario</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#" onclick="mostrarGenerales()">
+                        <span class="icon"><i class="fa-solid fa-house"></i></span>
+                        <span class="title">Generales</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="mostrarHorarios()">
+                        <span class="icon"><i class="fa-regular fa-calendar"></i></span>
+                        <span class="title">Horarios</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="mostrarAsistencias()">
+                        <span class="icon"><i class="fa-regular fa-user"></i></span>
+                        <span class="title">Asistencias</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" onclick="mostrarInformacionGrupo()">
+                        <span class="icon"><i class="fa-solid fa-users"></i></span>
+                        <span class="title">Detalles grupos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="mostrarNotificaciones()">
+                        <span class="icon"><i class="fa-regular fa-bell"></i></span>
+                        <span class="title">Notificaciones</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        <header class="topbar">
+            <div class="perfil">
+                <div class="foto"></div>
+                <div class="datos">
+                    <p><b>Nombre:</b> {{ profesor.usuario.get_full_name }}</p>
+                    <p><b>No. empleado:</b> {{ profesor.numero_empleado }}</p>
+                    <p><b>Correo:</b> {{ profesor.usuario.email }}</p>
+                </div>
+            </div>
+            <a href="{% url 'logout' %}" class="salir">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </a>
+        </header>
+        <main class="content">
+            <h1 id="titulo-vista">Generales</h1>
+            <section class="cards">
+                <div class="card card-grande">
+                    <h3>Clases impartidas</h3>
+                    <p>{{ total_materias }}</p>
+                </div>
+                <div class="card">
+                    <h3>Cantidad de grupos</h3>
+                    <p>{{ profesor.grupos.count }}</p>
+                </div>
+                <div class="card">
+                    <h3>Estado</h3>
+                    <p>
+                        {% if profesor.activo %}Activo{% else %}Inactivo{% endif %}
+                    </p>
+                </div>
+            </section>
+            <section id="contenido-vista" class="contenido-vista"></section>
+        </main>
+    </section>
+    <div id="template-generales" class="template">
+        <div class="notificaciones">
+            <h3>Notificaciones y actualizaciones</h3>
+            {% for notificacion in notificaciones %}
+            <div class="noti">
+                <span class="punto naranja"></span>
+                <div>
+                    <h4>{{ notificacion.get_tipo_display }}</h4>
+                    <p>{{ notificacion.mensaje }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="vacio">No hay notificaciones.</p>
+            {% endfor %}
+        </div>
+        <br><br>
+        <!--HORARIOS-->
+        <div id="template-horarios" class="template">
+            <div class="contenedor-tabla">
+                <h3>Horarios de materias impartidas</h3>
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Materias</th>
+                            <th>Grupo</th>
+                            <th>Tipo</th>
+                            <th>Lun</th>
+                            <th>Mar</th>
+                            <th>Miér</th>
+                            <th>Jue</th>
+                            <th>Vier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grupo in grupos %}
+                        <tr>
+                            <td>{{ grupo.materia.nombre }}</td>
+                            <td>{{ grupo.nombre }}</td>
+                            <td>Presencial</td>
+                            <td>{{ grupo.lun|safe }}</td>
+                            <td>{{ grupo.mar|safe }}</td>
+                            <td>{{ grupo.mie|safe }}</td>
+                            <td>{{ grupo.jue|safe }}</td>
+                            <td>{{ grupo.vie|safe }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">No hay horarios registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="template-asistencias" class="template">
+            {% for grupo in grupos %}
+            <div class="contenedor-asistencia">
+                <div class="encabezado-asistencia">
+                    <h3>{{ grupo.materia.nombre }}</h3>
+                    <span>Grupo {{ grupo.nombre }}</span>
+                </div>
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Sesión</th>
+                            <th>Día</th>
+                            <th>Hora</th>
+                            <th>Ver asistencias</th>
+                            <th>Registrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sesion in grupo.sesiones.all %}
+                        <tr>
+                            <td>{{ sesion.get_tipo_display }}</td>
+                            <td>{{ sesion.dia }}</td>
+                            <td>{{ sesion.hora_inicio }} - {{ sesion.hora_fin }}</td>
+                            <td>
+                                <a href="{% url 'ver_asistencias' sesion.id %}" style="color:#0F243C; font-weight:600;">
+                                    <i class="fa-solid fa-eye"></i> Ver
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'registrar_asistencia' sesion.id %}" style="color:#0F243C; font-weight:600;">
+                                    <i class="fa-solid fa-pen"></i> Registrar
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5">No hay sesiones en este grupo.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% empty %}
+            <p>No tienes grupos asignados.</p>
+            {% endfor %}
+        </div>
+
+        <!--GRUPOS -->
+        <div id="template-grupo" class="template">
+            {% for grupo in grupos %}
+            <div class="contenedor-detalle-grupo">
+                <div class="encabezado-grupo">
+                    <h3>{{ grupo.materia.nombre }}</h3>
+                    <button>Grupo {{ grupo.nombre }}</button>
+                </div>
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Materias</th>
+                            <th>Grupo</th>
+                            <th>Tipo</th>
+                            <th>Lun</th>
+                            <th>Mar</th>
+                            <th>Miér</th>
+                            <th>Jue</th>
+                            <th>Vier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ grupo.materia.nombre }}</td>
+                            <td>{{ grupo.nombre }}</td>
+                            <td>Presencial</td>
+                            <td>{{ grupo.lun|safe }}</td>
+                            <td>{{ grupo.mar|safe }}</td>
+                            <td>{{ grupo.mie|safe }}</td>
+                            <td>{{ grupo.jue|safe }}</td>
+                            <td>{{ grupo.vie|safe }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="subtitulo-alumnos">
+                    <h4>Alumnos</h4>
+                </div>
+                <table class="tabla tabla-alumnos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Expediente</th>
+                            <th>Correo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for estudiante in grupo.estudiantes.all %}
+                        <tr>
+                            <td>{{ estudiante.usuario.get_full_name }}</td>
+                            <td>{{ estudiante.matricula }}</td>
+                            <td>{{ estudiante.usuario.email }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No hay alumnos en este grupo.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <br><br>
+            {% empty %}
+            <p>No tienes grupos asignados.</p>
+            {% endfor %}
+        </div>
+        <!--NOTIS-->
+        <div id="template-notificaciones" class="template">
+            <div class="notificaciones">
+                <h3>Notificaciones recientes</h3>
+                {% for notificacion in notificaciones %}
+                <div class="noti">
+                    <span class="punto verde"></span>
+                    <div>
+                        <h4>{{ notificacion.get_tipo_display }}</h4>
+                        <p>{{ notificacion.mensaje }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="vacio">No hay notificaciones.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <script src="{% static 'DashMaestros.js' %}"></script>
+</body>
+
+</html>

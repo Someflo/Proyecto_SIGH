@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Profesor, Estudiante, Materia, Aula,
-    Grupo, DisponibilidadProfesor, Sesion, Asistencia
+    Grupo, DisponibilidadProfesor, Sesion, Asistencia, Notificacion
 )
 
 # Así configuran qué columnas ve el administrador en la tabla
@@ -23,4 +23,20 @@ admin.site.register(Materia)
 admin.site.register(DisponibilidadProfesor)
 admin.site.register(Aula)
 admin.site.register(Grupo)
-admin.site.register(Asistencia)
+@admin.register(Asistencia)
+class AsistenciaAdmin(admin.ModelAdmin):
+    list_display = ('estudiante', 'sesion', 'fecha', 'estado')
+    list_filter = ('estado', 'fecha', 'estudiante')
+    search_fields = ('estudiante__usuario__username', 'estudiante__matricula', 'sesion__grupo__nombre')
+
+@admin.register(Notificacion)
+class NotificacionAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'tipo', 'mensaje', 'fecha', 'leida')
+    list_filter = ('tipo', 'leida')
+    search_fields = ('usuario__username', 'mensaje')
+    list_editable = ('leida',)
+    actions = ['marcar_como_leidas']
+
+    def marcar_como_leidas(self, request, queryset):
+        queryset.update(leida=True)
+    marcar_como_leidas.short_description = "Marcar seleccionadas como leídas"

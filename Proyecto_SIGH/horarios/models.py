@@ -245,21 +245,19 @@ class Asistencia(models.Model):
 class Notificacion(models.Model):
     TIPO_CHOICES = [
         ('INFO', 'Información'),
-        ('CAMBIO', 'Cambio de horario'),
-        ('CANCELACION', 'Cancelación'),
-        ('RECORDATORIO', 'Recordatorio'),
+        ('ALERTA', 'Alerta'),
+        ('URGENTE', 'Urgente'),
     ]
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones')
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='INFO')
     mensaje = models.CharField(max_length=300)
-    tipo = models.CharField(max_length=15, choices=TIPO_CHOICES, default='INFO')
     fecha = models.DateTimeField(auto_now_add=True)
     leida = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Notificaciones'
-        ordering = ['-fecha']  # las mas recientes primero
+        ordering = ['-fecha']
 
     def __str__(self):
-        estado = '✓' if self.leida else '✗'
-        return f"[{estado}] {self.usuario.username}: {self.mensaje[:50]}"
+        return f"{self.usuario.username}: {self.mensaje[:50]}"

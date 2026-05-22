@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Asistencias - {{ sesion.grupo.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'styleDash.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background: #f4f6f8; display: block; }
+        .pagina { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .encabezado { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+        .encabezado a { color: #0F243C; font-size: 20px; }
+        .encabezado h1 { font-size: 24px; }
+        .badge { display: inline-block; background: #0F243C; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .estado-PRESENTE { color: limegreen; font-weight: 700; }
+        .estado-AUSENTE  { color: red; font-weight: 700; }
+        .estado-TARDANZA { color: orange; font-weight: 700; }
+        .estado-JUSTIFICADO { color: #888; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="pagina">
+    <div class="encabezado">
+        <a href="{% url 'dashboard' %}"><i class="fa-solid fa-arrow-left"></i></a>
+        <div>
+            <h1>Asistencias — {{ sesion.grupo.materia.nombre }}</h1>
+            <p>Grupo {{ sesion.grupo.nombre }} &nbsp;|&nbsp; {{ sesion.dia }} {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color:green; margin-bottom:16px;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <div class="contenedor-tabla">
+        <h3>Lista de asistencias</h3>
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Matrícula</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asistencia in asistencias %}
+                <tr>
+                    <td>{{ asistencia.estudiante.usuario.get_full_name }}</td>
+                    <td>{{ asistencia.estudiante.matricula }}</td>
+                    <td>{{ asistencia.fecha }}</td>
+                    <td class="estado-{{ asistencia.estado }}">{{ asistencia.get_estado_display }}</td>
+                    <td>{{ asistencia.observacion|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No hay asistencias registradas para esta sesión.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if perms or request.user.perfil_profesor %}
+    <div style="margin-top: 20px;">
+        <a href="{% url 'registrar_asistencia' sesion.id %}"
+           style="background:#0F243C; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600;">
+            <i class="fa-solid fa-pen"></i> Registrar / Editar asistencia
+        </a>
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Registrar Asistencia - {{ sesion.grupo.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'styleDash.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background: #f4f6f8; display: block; }
+        .pagina { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .encabezado { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+        .encabezado a { color: #0F243C; font-size: 20px; }
+        .encabezado h1 { font-size: 24px; }
+        select.estado-select { padding: 6px 10px; border: 1px solid #c9c9c9; border-radius: 6px; font-size: 13px; }
+        textarea.obs { width: 100%; padding: 6px; border: 1px solid #c9c9c9; border-radius: 6px; font-size: 12px; resize: vertical; min-height: 36px; }
+        .btn-guardar { margin-top: 20px; background: #0F243C; color: white; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        .btn-guardar:hover { background: #14365d; }
+    </style>
+</head>
+<body>
+<div class="pagina">
+    <div class="encabezado">
+        <a href="{% url 'dashboard' %}"><i class="fa-solid fa-arrow-left"></i></a>
+        <div>
+            <h1>Registrar Asistencia — {{ sesion.grupo.materia.nombre }}</h1>
+            <p>Grupo {{ sesion.grupo.nombre }} &nbsp;|&nbsp; {{ sesion.dia }} {{ sesion.hora_inicio }} - {{ sesion.hora_fin }}</p>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="contenedor-tabla">
+            <h3>Lista de alumnos</h3>
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Alumno</th>
+                        <th>Matrícula</th>
+                        <th>Estado</th>
+                        <th>Observación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for estudiante in estudiantes %}
+                    <tr>
+                        <td>{{ estudiante.usuario.get_full_name }}</td>
+                        <td>{{ estudiante.matricula }}</td>
+                        <td>
+                            <select name="estado_{{ estudiante.id }}" class="estado-select">
+                                <option value="PRESENTE">Presente</option>
+                                <option value="AUSENTE">Ausente</option>
+                                <option value="TARDANZA">Tardanza</option>
+                                <option value="JUSTIFICADO">Justificado</option>
+                            </select>
+                        </td>
+                        <td>
+                            <textarea name="observacion_{{ estudiante.id }}" class="obs" placeholder="Opcional..."></textarea>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No hay alumnos inscritos en este grupo.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn-guardar">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar asistencia
+        </button>
+    </form>
+</div>
+</body>
+</html>

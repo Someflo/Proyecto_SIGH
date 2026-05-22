@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Portal</title>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <h1 class="titulo">Portal de acceso</h1>
+
+        <div class="opciones">
+
+            <div class="opcion" id="maestro">
+                <div class="texto">
+                    Acceso como
+                    <h2 class="sub">Maestro</h2>
+                    <i class="fa-solid fa-school icono-portal"></i>
+                </div>
+            </div>
+
+            <div class="opcion" id="alumno">
+                <div class="texto">
+                    Acceso como
+                    <h2 class="sub">Alumno</h2>
+                    <i class="fa-solid fa-user-graduate icono-portal"></i>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{% static 'main.js' %}"></script>
+
+</body>
+
+</html>

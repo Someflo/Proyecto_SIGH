@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>SIGH - Iniciar sesión</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="contenedor">
+
+
+
+        <div class="login">
+
+            <i class="fa-solid fa-arrow-right-to-bracket icon-login"></i>
+
+            <h1 class="acess">Acceso al sistema</h1>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'login' %}" method="post" class="formulario">
+                {% csrf_token %}
+
+                <label for="username" class="label">
+                    Usuario
+                </label>
+
+                <input type="text" name="username" class="input">
+
+                <label for="password" class="label">
+                    Contraseña
+                </label>
+
+                <input type="password" name="password" class="input">
+
+                <button type="submit" class="boton">
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="{% static 'main.js' %}"></script>
+
+</body>
+
+</html>
